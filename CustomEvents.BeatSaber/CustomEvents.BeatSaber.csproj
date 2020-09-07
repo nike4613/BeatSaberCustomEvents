@@ -34,6 +34,10 @@
       <HintPath>..\Refs\Main.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="SemVer">
+      <HintPath>..\Refs\SemVer.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="SiraUtil">
       <HintPath>..\Refs\SiraUtil.dll</HintPath>
       <Private>false</Private>
@@ -58,6 +62,10 @@
       <HintPath>..\Refs\Zenject-usage.dll</HintPath>
       <Private>false</Private>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Patches\" />
   </ItemGroup>
 
 </Project>
