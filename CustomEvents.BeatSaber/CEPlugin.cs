@@ -1,10 +1,12 @@
-﻿using HarmonyLib;
+﻿using DNEE;
+using HarmonyLib;
 using IPA;
 using IPA.Loader;
 using IPA.Logging;
 using SiraUtil.Zenject;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -35,9 +37,17 @@ namespace CustomEvents
         public void OnEnable()
         {
             Log.Debug($"Enabling...");
-            Harmony.PatchAll(Assembly.GetCallingAssembly());
+            Harmony.PatchAll(Assembly.GetExecutingAssembly());
             Installer.RegisterAppInstaller<PluginInstaller>();
             Log.Debug($"Enabled {Metadata.Name} version {Metadata.Version}");
+
+            var source = new EventSource("TestSource");
+            source.SubscribeTo<BeatmapEventData>(Events.BeatmapEvent, (@event, data) =>
+            {
+                Log.Debug($"Before invoke default BeatmapEvent: {data}");
+                @event.NextAndTryTransform(data, _ => _);
+                Log.Debug("After invoke default BeatmapEvent");
+            }, 0);
         }
 
         [OnDisable]
@@ -45,6 +55,7 @@ namespace CustomEvents
         {
             Installer.UnregisterAppInstaller<PluginInstaller>();
             Harmony.UnpatchAll(Harmony.Id);
+            Log.Debug($"Disabled {Metadata.Name} version {Metadata.Version}");
         }
     }
 }

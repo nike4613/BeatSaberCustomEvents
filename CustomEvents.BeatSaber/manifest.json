@@ -13,7 +13,6 @@
     "BSIPA": "^4.0.0",
     "SiraUtil": "^0.2.0"
   },
-  "loadBefore": [ "BSIPA" ],
   "files": [
     "Libs/DNEE.dll"
   ]
