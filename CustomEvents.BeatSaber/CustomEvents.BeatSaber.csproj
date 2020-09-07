@@ -1,15 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;CS8762;CS8767</WarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <RootNamespace>CustomEvents</RootNamespace>
+    <AssemblyName>CustomEvents</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DNEE" Version="1.0.0-rc1" />
+    <EmbeddedResource Include="manifest.json" />
+    <EmbeddedResource Include="description.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DNEE" Version="1.0.0-rc1">
+      <IncludeAssets>all</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +34,10 @@
       <HintPath>..\Refs\Main.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="SiraUtil">
+      <HintPath>..\Refs\SiraUtil.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>..\Refs\Unity.TextMeshPro.dll</HintPath>
       <Private>false</Private>
@@ -35,6 +48,14 @@
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\Refs\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Zenject">
+      <HintPath>..\Refs\Zenject.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Zenject-usage">
+      <HintPath>..\Refs\Zenject-usage.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>

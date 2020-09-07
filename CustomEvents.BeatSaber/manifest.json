@@ -1,0 +1,20 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/bsmg/BSIPA-MetadataFileSchema/master/Schema.json",
+  "id": "CustomEvents",
+  "name": "Custom Events",
+  "author": "DaNike",
+  "version": "0.0.1",
+  "description": [
+    "#![CustomEvents.description.md]",
+    "Custom Events"
+  ],
+  "gameVersion": "1.11.1",
+  "dependsOn": {
+    "BSIPA": "^4.0.0",
+    "SiraUtil": "^0.2.0"
+  },
+  "loadBefore": [ "BSIPA" ],
+  "files": [
+    "Libs/DNEE.dll"
+  ]
+}

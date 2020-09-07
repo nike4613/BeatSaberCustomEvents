@@ -1,12 +1,23 @@
 ::from bsinstalldir.txt
 "::resolveInHere Libs/
 ""0Harmony.dll
+"::resolveInHere Plugins/
+""SiraUtil.
+"""dll
+"""xml?optional
 "Beat Saber_Data/
 ""::resolveInHere Managed/
-"""Main.dll
+"""Main.dll?virt
 """IPA.Loader.
 """"dll
 """"xml
+"""Zenject
+""""-usage.
+"""""dll
+"""""xml?optional
+"""".
+"""""dll
+"""""xml?optional
 """Unity
 """".TextMeshPro.dll
 """"Engine.
