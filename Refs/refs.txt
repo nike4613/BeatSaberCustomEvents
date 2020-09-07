@@ -1,0 +1,14 @@
+::from bsinstalldir.txt
+"::resolveInHere Libs/
+""?optional
+"Beat Saber_Data/
+""::resolveInHere Managed/
+"""Main.dll
+"""IPA.Loader.
+""""dll
+""""xml
+"""Unity
+"""".TextMeshPro.dll
+""""Engine.
+"""""dll
+"""""CoreModule.dll
