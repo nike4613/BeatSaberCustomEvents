@@ -1,6 +1,6 @@
 ::from bsinstalldir.txt
 "::resolveInHere Libs/
-""?optional
+""0Harmony.dll
 "Beat Saber_Data/
 ""::resolveInHere Managed/
 """Main.dll
