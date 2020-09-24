@@ -1,5 +1,7 @@
 ﻿using CustomEvents.Internal;
 using DNEE;
+using DNEE.Utility;
+using SiraUtil;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +17,8 @@ namespace CustomEvents
             DynamicEventHandler handler, 
             HandlerPriority priority,
             int callahead = 0, 
-            bool callIfNoCallaheadInfo = false)
+            bool callIfNoCallaheadInfo = false,
+            bool tryFindLastCallaheadData = true)
         {
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
@@ -36,6 +39,21 @@ namespace CustomEvents
                 }
                 else
                 {
+                    if (tryFindLastCallaheadData)
+                    {
+                        var dat = ev.DataHistory.Where(d => d.IsTyped).Select(d => Maybe.Some(d.TypedData)).FirstOrDefault();
+                        if (dat.HasValue)
+                        {
+                            var cai = dat.Value;
+                            if (cai.EventCallaheadAmount == callahead)
+                            {
+                                var passData = (object?)ev.DynamicData;
+                                handler(new DynamicCallaheadEventProxy(ev, cai), passData);
+                            }
+                            return;
+                        }
+                    }
+
                     if (callIfNoCallaheadInfo)
                     {
                         handler(ev, ev.DynamicData);
@@ -51,7 +69,8 @@ namespace CustomEvents
             NoReturnEventHandler<ICallaheadData<T>> handler, 
             HandlerPriority prioriy,
             int callahead = 0,
-            bool callIfDynamicOnly = false)
+            bool callIfDynamicOnly = false,
+            bool tryFindLastCallaheadData = true)
         {
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
@@ -72,6 +91,20 @@ namespace CustomEvents
                 }
                 else
                 {
+                    if (tryFindLastCallaheadData)
+                    {
+                        var dat = ev.DataHistory.Where(d => d.IsTyped).Select(d => Maybe.Some(d.TypedData)).FirstOrDefault();
+                        if (dat.HasValue)
+                        {
+                            var cai = dat.Value;
+                            if (cai.EventCallaheadAmount == callahead)
+                            {
+                                handler(ev, Maybe.None);
+                            }
+                            return;
+                        }
+                    }
+
                     if (callIfDynamicOnly)
                     {
                         handler(ev, data);
@@ -87,7 +120,8 @@ namespace CustomEvents
             ReturnEventHandler<ICallaheadData<T>, TRet> handler,
             HandlerPriority prioriy,
             int callahead = 0,
-            bool callIfDynamicOnly = false)
+            bool callIfDynamicOnly = false,
+            bool tryFindLastCallaheadData = true)
         {
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
@@ -108,6 +142,20 @@ namespace CustomEvents
                 }
                 else
                 {
+                    if (tryFindLastCallaheadData)
+                    {
+                        var dat = ev.DataHistory.Where(d => d.IsTyped).Select(d => Maybe.Some(d.TypedData)).FirstOrDefault();
+                        if (dat.HasValue)
+                        {
+                            var cai = dat.Value;
+                            if (cai.EventCallaheadAmount == callahead)
+                            {
+                                handler(ev, Maybe.None);
+                            }
+                            return;
+                        }
+                    }
+
                     if (callIfDynamicOnly)
                     {
                         handler(ev, data);

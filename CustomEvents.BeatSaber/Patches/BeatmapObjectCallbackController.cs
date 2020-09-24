@@ -17,7 +17,7 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
     [HarmonyPatch(MethodType.Normal)]
     internal class SendBeatmapEventDidTriggetEvent
     {
-        public static bool Prefix(BeatmapObjectCallbackController __instance, BeatmapEventData beatmapEventData)
+        public static bool Prefix(BeatmapEventData beatmapEventData)
         {
             CEPlugin.Instance.Log.Debug($"In {nameof(BeatmapObjectCallbackController.SendBeatmapEventDidTriggerEvent)}");
             Events.Source.SendEvent(Events.BeatmapEvent, beatmapEventData);
