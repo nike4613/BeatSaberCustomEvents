@@ -16,7 +16,7 @@ namespace CustomEvents
             in EventName @event, 
             DynamicEventHandler handler, 
             HandlerPriority priority,
-            int callahead = 0, 
+            float callahead = 0, 
             bool callIfNoCallaheadInfo = false,
             bool tryFindLastCallaheadData = true)
         {
@@ -61,14 +61,14 @@ namespace CustomEvents
                 }
             }, priority);
 
-            return RegisterUnsubscribeNotif(handle, callahead);
+            return RegisterUnsubscribeNotif(handle, @event, callahead);
         }
 
         public static EventHandle SubscribeToCallahead<T>(this EventSource source, 
             in EventName @event, 
             NoReturnEventHandler<ICallaheadData<T>> handler, 
             HandlerPriority prioriy,
-            int callahead = 0,
+            float callahead = 0,
             bool callIfDynamicOnly = false,
             bool tryFindLastCallaheadData = true)
         {
@@ -112,14 +112,14 @@ namespace CustomEvents
                 }
             }, prioriy);
 
-            return RegisterUnsubscribeNotif(handle, callahead);
+            return RegisterUnsubscribeNotif(handle, @event, callahead);
         }
 
         public static EventHandle SubscribeToCallahead<T, TRet>(this EventSource source,
             in EventName @event,
             ReturnEventHandler<ICallaheadData<T>, TRet> handler,
             HandlerPriority prioriy,
-            int callahead = 0,
+            float callahead = 0,
             bool callIfDynamicOnly = false,
             bool tryFindLastCallaheadData = true)
         {
@@ -163,16 +163,37 @@ namespace CustomEvents
                 }
             }, prioriy);
 
-            return RegisterUnsubscribeNotif(handle, callahead);
+            return RegisterUnsubscribeNotif(handle, @event, callahead);
         }
 
-        private static void RegisterCallaheadFor(in EventName @event, int callahead)
+        private static void RegisterCallaheadFor(in EventName @event, float callahead)
         {
-            // TODO: somehow actually register a callahead for the event
+            if (@event == Events.BeatmapEvent)
+            {
+                CallaheadManager.AddEventCallahead(callahead);
+            }
+            else if (@event == Events.BeatmapObject)
+            {
+                CallaheadManager.AddObjectCallahead(callahead);
+            }
+            else
+            {
+                throw new ArgumentException($"Cannot register callahead for unknown event {@event}", nameof(@event));
+            }
         }
 
-        private static EventHandle RegisterUnsubscribeNotif(EventHandle handle, int callahead)
-            => handle.OnUnsubscribe(() => { /* TODO: unregister the callahead if there are no others */ });
+        private static EventHandle RegisterUnsubscribeNotif(EventHandle handle, EventName @event, float callahead)
+            => handle.OnUnsubscribe(() =>
+            {
+                if (@event == Events.BeatmapEvent)
+                {
+                    CallaheadManager.RemoveEventCallahead(callahead);
+                }
+                else if (@event == Events.BeatmapObject)
+                {
+                    CallaheadManager.RemoveObjectCallahead(callahead);
+                }
+            });
 
         private sealed class DynamicCallaheadEventProxy : IEvent
         {

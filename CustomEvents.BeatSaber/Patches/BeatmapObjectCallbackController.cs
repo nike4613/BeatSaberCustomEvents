@@ -15,13 +15,40 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
     [HarmonyPatch(typeof(BeatmapObjectCallbackController))]
     [HarmonyPatch(nameof(BeatmapObjectCallbackController.SendBeatmapEventDidTriggerEvent))]
     [HarmonyPatch(MethodType.Normal)]
-    internal class SendBeatmapEventDidTriggetEvent
+    internal class SendBeatmapEventDidTriggerEvent
     {
+        // This method is called *at* event execution time.
+        // TODO: Should this then provide a BeatmapEventData impl with ICallaheadData.EventCallaheadAmount = 0?
         public static bool Prefix(BeatmapEventData beatmapEventData)
         {
             CEPlugin.Instance.Log.Debug($"In {nameof(BeatmapObjectCallbackController.SendBeatmapEventDidTriggerEvent)}");
             Events.Source.SendEvent(Events.BeatmapEvent, beatmapEventData);
             return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(BeatmapObjectCallbackController))]
+    [HarmonyPatch(nameof(BeatmapObjectCallbackController.LateUpdate))]
+    [HarmonyPatch(MethodType.Normal)]
+    internal class LateUpdate
+    {
+        private static readonly FieldAccessor<BeatmapObjectCallbackController, BeatmapData>.Accessor _beatmapData
+            = FieldAccessor<BeatmapObjectCallbackController, BeatmapData>.GetAccessor(nameof(_beatmapData));
+        private static readonly FieldAccessor<BeatmapObjectCallbackController, float>.Accessor _spawningStartTime
+            = FieldAccessor<BeatmapObjectCallbackController, float>.GetAccessor(nameof(_spawningStartTime));
+        private static readonly FieldAccessor<BeatmapObjectCallbackController, IAudioTimeSource>.Accessor _audioTimeSource
+            = FieldAccessor<BeatmapObjectCallbackController, IAudioTimeSource>.GetAccessor(nameof(_audioTimeSource));
+
+        public static bool Prefix(BeatmapObjectCallbackController __instance)
+        {
+            Impl(__instance);
+            return false;
+        }
+
+        private static void Impl(BeatmapObjectCallbackController self)
+        {
+            var beatmapData = _beatmapData(ref self);
+            if (beatmapData == null) return;
         }
     }
 
