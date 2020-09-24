@@ -1,4 +1,5 @@
-﻿using DNEE;
+﻿using CustomEvents.Internal;
+using DNEE;
 using DNEE.Utility;
 using HarmonyLib;
 using IPA.Utilities;
@@ -36,8 +37,39 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
             = FieldAccessor<BeatmapObjectCallbackController, BeatmapData>.GetAccessor(nameof(_beatmapData));
         private static readonly FieldAccessor<BeatmapObjectCallbackController, float>.Accessor _spawningStartTime
             = FieldAccessor<BeatmapObjectCallbackController, float>.GetAccessor(nameof(_spawningStartTime));
+        private static readonly FieldAccessor<BeatmapObjectCallbackController, int>.Accessor _nextEventIndex
+            = FieldAccessor<BeatmapObjectCallbackController, int>.GetAccessor(nameof(_nextEventIndex));
         private static readonly FieldAccessor<BeatmapObjectCallbackController, IAudioTimeSource>.Accessor _audioTimeSource
             = FieldAccessor<BeatmapObjectCallbackController, IAudioTimeSource>.GetAccessor(nameof(_audioTimeSource));
+
+        private static readonly FieldAccessor<BeatmapObjectCallbackController, Action?>.Accessor callbacksWereProcessed
+            = FieldAccessor<BeatmapObjectCallbackController, Action?>.GetAccessor(nameof(BeatmapObjectCallbackController.callbacksForThisFrameWereProcessedEvent));
+
+        private sealed class MoreFields
+        {
+            public sealed class EventCell
+            {
+                public int NextEventIdx;
+            }
+
+            private readonly Dictionary<float, int[]> ObjectCells = new();
+            private readonly Dictionary<float, EventCell> EventCells = new();
+
+            public int[] GetObjCell(BeatmapData data, float callahead)
+            {
+                if (!ObjectCells.TryGetValue(callahead, out var cell))
+                    ObjectCells.Add(callahead, cell = new int[data.beatmapLinesData.Length]);
+                return cell;
+            }
+            public EventCell GetEvtCell(float callahead)
+            {
+                if (!EventCells.TryGetValue(callahead, out var cell))
+                    EventCells.Add(callahead, cell = new());
+                return cell;
+            }
+        }
+
+        private static readonly ConditionalWeakTable<BeatmapObjectCallbackController, MoreFields> moreFieldsHolder = new();
 
         public static bool Prefix(BeatmapObjectCallbackController __instance)
         {
@@ -45,10 +77,84 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
             return false;
         }
 
+        // This implementation is partially copied from the game, hoping to preserve behaviour while using a completely
+        //   different event dispatcher
         private static void Impl(BeatmapObjectCallbackController self)
         {
+            var moreFields = moreFieldsHolder.GetValue(self, oc => new());
+
             var beatmapData = _beatmapData(ref self);
             if (beatmapData == null) return;
+
+            var timeSource = _audioTimeSource(ref self);
+            var spawningStartTime = _spawningStartTime(ref self);
+
+            // Handle objects
+            var objCallaheads = CallaheadManager.ObjectCallaheads;
+            foreach (var callahead in objCallaheads)
+            {
+                // our cell is the array that stores the nextInLine data for all the lines (it is a single array)
+                var cell = moreFields.GetObjCell(beatmapData, callahead);
+                for (int i = 0; i < beatmapData.beatmapLinesData.Length; i++)
+                {
+                    var objs = beatmapData.beatmapLinesData[i].beatmapObjectsData;
+                    ref var nextInLine = ref cell[i];
+                    while (nextInLine < objs.Length)
+                    {
+                        var data = objs[nextInLine];
+                        if (data.time - callahead >= timeSource.songTime)
+                            break;
+
+                        if (data.time >= spawningStartTime)
+                        {
+                            // TODO: actually preserve exact time ordering, even between lines
+                            // TODO: change out the actual object data for a derivative that implements ICallaheadData (with internal setters ofc)
+                            Events.Source.SendEvent<ICallaheadData<BeatmapObjectData>>(Events.BeatmapObject, new WrapperCallaheadData<BeatmapObjectData>(data, callahead));
+                        }
+                    }
+                    nextInLine++;
+                }
+            }
+
+            // Handle event callaheads
+            var evtCallaheads = CallaheadManager.EventCallaheads;
+            foreach (var callahead in evtCallaheads)
+            {
+                // our cell is a reference type that we can modify in place as we work through everything
+                var cell = moreFields.GetEvtCell(callahead);
+                var eventDatas = beatmapData.beatmapEventData;
+                while (cell.NextEventIdx < eventDatas.Length)
+                {
+                    var data = eventDatas[cell.NextEventIdx];
+                    if (data.time - callahead >= timeSource.songTime)
+                        break;
+
+                    // TODO: change out the actual event data for a derivative that implements ICallaheadData
+                    Events.Source.SendEvent<ICallaheadData<BeatmapEventData>>(Events.BeatmapEvent, new WrapperCallaheadData<BeatmapEventData>(data, callahead));
+
+                    cell.NextEventIdx++;
+                }
+            }
+
+            {
+                var eventDatas = beatmapData.beatmapEventData;
+
+                // handle on time events
+                ref var nextIdx = ref _nextEventIndex(ref self);
+                while (nextIdx < eventDatas.Length)
+                {
+                    var data = eventDatas[nextIdx];
+                    if (data.time >= timeSource.songTime)
+                        break;
+
+                    // TODO: re: should this be a callahead with time 0?
+                    self.SendBeatmapEventDidTriggerEvent(data);
+
+                    nextIdx++;
+                }
+            }
+
+            callbacksWereProcessed(ref self)?.Invoke();
         }
     }
 

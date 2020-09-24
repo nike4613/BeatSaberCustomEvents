@@ -10,9 +10,9 @@ namespace CustomEvents.Internal
     {
         public T Data { get; }
 
-        public int EventCallaheadAmount { get; }
+        public float EventCallaheadAmount { get; }
 
-        public WrapperCallaheadData(T data, int callahead)
+        public WrapperCallaheadData(T data, float callahead)
             => (Data, EventCallaheadAmount) = (data, callahead);
     }
 }

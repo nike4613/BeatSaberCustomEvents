@@ -9,6 +9,6 @@ namespace CustomEvents
     public interface ICallaheadData<out T>
     {
         T Data { get; }
-        int EventCallaheadAmount { get; }
+        float EventCallaheadAmount { get; }
     }
 }
