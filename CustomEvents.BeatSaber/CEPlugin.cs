@@ -51,6 +51,28 @@ namespace CustomEvents
                 @event.NextAndTryTransform(data, _ => _);
                 Log.Debug("After invoke default BeatmapEvent");
             }, 0);
+            source.SubscribeTo<ICallaheadData<BeatmapEventData>>(Events.BeatmapEvent, (@event, data) =>
+            {
+                if (data.HasValue)
+                {
+                    var cah = data.Value;
+                    Log.Debug($"Callahead Event: {cah.Data} (ahead {cah.EventCallaheadAmount})");
+                }
+            }, (HandlerPriority)(-1));
+            source.SubscribeTo<BeatmapObjectData>(Events.BeatmapObject, (@event, data) =>
+            {
+                Log.Debug($"Before invoke default BeatmapObject: {data}");
+                @event.NextAndTryTransform(data, _ => _);
+                Log.Debug("After invoke default BeatmapObject");
+            }, 0);
+            source.SubscribeTo<ICallaheadData<BeatmapObjectData>>(Events.BeatmapObject, (@event, data) =>
+            {
+                if (data.HasValue)
+                {
+                    var cah = data.Value;
+                    Log.Debug($"Callahead Object: {cah.Data} (ahead {cah.EventCallaheadAmount})");
+                }
+            }, (HandlerPriority)(-1));
         }
 
         [OnDisable]

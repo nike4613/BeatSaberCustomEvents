@@ -33,12 +33,16 @@ namespace CustomEvents.Internal
 
         private static void AddCallahead(ConcurrentDictionary<float, CallaheadRefcountCell> dict, float callahead)
         {
+            CEPlugin.Instance.Log.Debug($"Registered callahead {callahead}");
+
             var cell = dict.GetOrAdd(callahead, f => new());
             Interlocked.Increment(ref cell.Refcount);
         }
 
         private static void RemoveCallahead(ConcurrentDictionary<float, CallaheadRefcountCell> dict, float callahead)
         {
+            CEPlugin.Instance.Log.Debug($"Removed callahead ref {callahead}");
+
             if (dict.TryGetValue(callahead, out var cell))
             {
                 if (Interlocked.Decrement(ref cell.Refcount) <= 0)
