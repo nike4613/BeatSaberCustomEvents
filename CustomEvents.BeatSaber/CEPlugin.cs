@@ -11,10 +11,13 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CustomEvents
 {
     [Plugin(RuntimeOptions.SingleStartInit)]
+    [SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", 
+        Justification = "This class is instantiated by the mod loader.")]
     internal class CEPlugin
     {
         private static CEPlugin? instance;

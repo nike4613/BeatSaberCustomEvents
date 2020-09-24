@@ -5,6 +5,7 @@ using HarmonyLib;
 using IPA.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -166,6 +167,8 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
         private static readonly FieldAccessor<BeatmapObjectCallbackController, Action<BeatmapEventData>?>.Accessor beatmapEventDidTriggerEvent
             = FieldAccessor<BeatmapObjectCallbackController, Action<BeatmapEventData>?>.GetAccessor(nameof(BeatmapObjectCallbackController.beatmapEventDidTriggerEvent));
 
+        [SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes",
+            Justification = "This class is instantiated by Unity.")]
         private class EventHandleManager : MonoBehaviour
         {
             public EventHandle Handle { get; set; }
