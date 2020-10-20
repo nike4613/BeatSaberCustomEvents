@@ -17,6 +17,7 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
 {
     using static __Type;
 
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "The __ is so that it doesn't conflict with System.Type and other similar types.")]
     internal static class __Type
     {
         internal static readonly FieldAccessor<BeatmapObjectCallbackController, BeatmapData>.Accessor _beatmapData
@@ -141,6 +142,7 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
     // TODO: somehow handle dynamic changes in the callahead time???
     [HarmonyPatch(typeof(BeatmapObjectCallbackController))]
     [HarmonyPatch(MethodType.Normal)]
+    [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "The leading underscore indicates that it is not an actual member, but rather several.")]
     internal class _CallbackFunctions
     {
         [HarmonyPrefix]

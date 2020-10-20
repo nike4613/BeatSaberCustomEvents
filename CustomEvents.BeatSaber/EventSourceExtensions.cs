@@ -203,6 +203,7 @@ namespace CustomEvents
             public DynamicCallaheadEventProxy(IEvent ev, ICallaheadData<dynamic?> data)
                 => (@event, prevData) = (ev, data);
 
+            public dynamic? Data => @event.Data;
             public DataOrigin DataOrigin => @event.DataOrigin;
 
             public EventName EventName => @event.EventName;
@@ -211,6 +212,9 @@ namespace CustomEvents
             public bool AlwaysInvokeNext { get => @event.AlwaysInvokeNext; set => @event.AlwaysInvokeNext = value; }
 
             public IEnumerable<DataWithOrigin> DataHistory => @event.DataHistory;
+
+            // nothing special can or should be done about this
+            public EventResult Next() => @event.Next();
 
             public EventResult Next(dynamic? data)
             {
