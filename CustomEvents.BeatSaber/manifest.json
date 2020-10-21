@@ -8,10 +8,10 @@
     "#![CustomEvents.description.md]",
     "Custom Events"
   ],
-  "gameVersion": "1.11.1",
+  "gameVersion": "1.12.2",
   "dependsOn": {
     "BSIPA": "^4.0.0",
-    "SiraUtil": "^1.0.0"
+    "SiraUtil": "^2.0.0"
   },
   "files": [
     "Libs/DNEE.dll"

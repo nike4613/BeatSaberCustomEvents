@@ -1,5 +1,4 @@
-﻿using BeatmapEditor3D;
-using CustomEvents.Internal;
+﻿using CustomEvents.Internal;
 using DNEE;
 using DNEE.Utility;
 using HarmonyLib;
@@ -20,8 +19,8 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
     [SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "The __ is so that it doesn't conflict with System.Type and other similar types.")]
     internal static class __Type
     {
-        internal static readonly FieldAccessor<BeatmapObjectCallbackController, BeatmapData>.Accessor _beatmapData
-            = FieldAccessor<BeatmapObjectCallbackController, BeatmapData>.GetAccessor(nameof(_beatmapData));
+        internal static readonly FieldAccessor<BeatmapObjectCallbackController, IReadonlyBeatmapData>.Accessor _beatmapData
+            = FieldAccessor<BeatmapObjectCallbackController, IReadonlyBeatmapData>.GetAccessor(nameof(_beatmapData));
         internal static readonly FieldAccessor<BeatmapObjectCallbackController, float>.Accessor _spawningStartTime
             = FieldAccessor<BeatmapObjectCallbackController, float>.GetAccessor(nameof(_spawningStartTime));
         internal static readonly FieldAccessor<BeatmapObjectCallbackController, int>.Accessor _nextEventIndex
@@ -53,10 +52,10 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
             EventCells.Clear();
         }
 
-        public int[] GetObjCell(BeatmapData data, float callahead)
+        public int[] GetObjCell(IReadonlyBeatmapData data, float callahead)
         {
             if (!ObjectCells.TryGetValue(callahead, out var cell))
-                ObjectCells.Add(callahead, cell = new int[data.beatmapLinesData.Length]);
+                ObjectCells.Add(callahead, cell = new int[data.beatmapLinesData.Count]);
             return cell;
         }
         public EventCell GetEvtCell(float callahead)
@@ -76,7 +75,7 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
         // TODO: Should this then provide a BeatmapEventData impl with ICallaheadData.EventCallaheadAmount = 0?
         public static bool Prefix(BeatmapEventData beatmapEventData)
         {
-            CEPlugin.Instance.Log.Debug($"In {nameof(BeatmapObjectCallbackController.SendBeatmapEventDidTriggerEvent)}");
+            //CEPlugin.Instance.Log.Debug($"In {nameof(BeatmapObjectCallbackController.SendBeatmapEventDidTriggerEvent)}");
             Events.Source.SendEvent(Events.BeatmapEvent, beatmapEventData);
             return false;
         }
@@ -252,11 +251,11 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
             {
                 // our cell is the array that stores the nextInLine data for all the lines (it is a single array)
                 var cell = moreFields.GetObjCell(beatmapData, callahead);
-                for (int i = 0; i < beatmapData.beatmapLinesData.Length; i++)
+                for (int i = 0; i < beatmapData.beatmapLinesData.Count; i++)
                 {
                     var objs = beatmapData.beatmapLinesData[i].beatmapObjectsData;
                     ref var nextInLine = ref cell[i];
-                    while (nextInLine < objs.Length)
+                    while (nextInLine < objs.Count)
                     {
                         var data = objs[nextInLine];
                         if (data.time - callahead >= timeSource.songTime)
@@ -280,8 +279,8 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
             {
                 // our cell is a reference type that we can modify in place as we work through everything
                 var cell = moreFields.GetEvtCell(callahead);
-                var eventDatas = beatmapData.beatmapEventData;
-                while (cell.NextEventIdx < eventDatas.Length)
+                var eventDatas = beatmapData.beatmapEventsData;
+                while (cell.NextEventIdx < eventDatas.Count)
                 {
                     var data = eventDatas[cell.NextEventIdx];
                     if (data.time - callahead >= timeSource.songTime)
@@ -295,11 +294,11 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
             }
 
             {
-                var eventDatas = beatmapData.beatmapEventData;
+                var eventDatas = beatmapData.beatmapEventsData;
 
                 // handle on time events
                 ref var nextIdx = ref _nextEventIndex(ref self);
-                while (nextIdx < eventDatas.Length)
+                while (nextIdx < eventDatas.Count)
                 {
                     var data = eventDatas[nextIdx];
                     if (data.time >= timeSource.songTime)
@@ -377,7 +376,7 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
                     eventData = edata.Value.TypedData;
                 }
 
-                CEPlugin.Instance.Log.Debug($"In {Events.BeatmapEvent} default handler with {eventData} (from {origin})");
+                //CEPlugin.Instance.Log.Debug($"In {Events.BeatmapEvent} default handler with {eventData} (from {origin})");
 
                 var callbacks = beatmapEventDidTriggerEvent(ref __instance);
                 callbacks?.Invoke(eventData);

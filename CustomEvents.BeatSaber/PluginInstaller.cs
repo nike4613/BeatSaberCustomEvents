@@ -10,7 +10,7 @@ namespace CustomEvents
 {
     [SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes",
         Justification = "This class is instantiated by SiraUtil/Zenject.")]
-    internal class PluginInstaller : MonoInstaller
+    internal class PluginInstaller : InstallerBase
     {
         public override void InstallBindings()
         {

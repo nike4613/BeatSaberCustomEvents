@@ -28,12 +28,15 @@ namespace CustomEvents
         public PluginMetadata Metadata { get; }
 
         [Init]
-        public CEPlugin(Logger log, PluginMetadata meta)
+        public CEPlugin(Logger log, PluginMetadata meta, Zenjector zenjector)
         {
             instance = this;
             Metadata = meta;
             Log = log;
             Harmony = new Harmony("com.cirr.danike.CustomEvents");
+
+            // Sira handles enables/disables sanely automagically!
+            zenjector.OnApp<PluginInstaller>();
         }
 
         [OnEnable]
@@ -41,7 +44,6 @@ namespace CustomEvents
         {
             Log.Debug($"Enabling...");
             Harmony.PatchAll(Assembly.GetExecutingAssembly());
-            Installer.RegisterAppInstaller<PluginInstaller>();
             Log.Debug($"Enabled {Metadata.Name} version {Metadata.Version}");
 
             var source = new EventSource("TestSource");
@@ -78,7 +80,6 @@ namespace CustomEvents
         [OnDisable]
         public void OnDisable()
         {
-            Installer.UnregisterAppInstaller<PluginInstaller>();
             Harmony.UnpatchAll(Harmony.Id);
             Log.Debug($"Disabled {Metadata.Name} version {Metadata.Version}");
         }
