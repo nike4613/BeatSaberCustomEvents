@@ -72,4 +72,16 @@
     </Reference>
   </ItemGroup>
 
+  <Target Name="PackOutput" AfterTargets="Build">
+    <MakeDir Directories="$(OutputPath)\Libs;$(OutputPath)\Plugins" />
+
+    <ItemGroup>
+      <_PluginFiles Include="$(OutputPath)\$(AssemblyName).*" />
+      <_LibsFiles Include="$(OutputPath)\*" Exclude="$(OutputPath)\$(AssemblyName).*" />
+    </ItemGroup>
+
+    <Move SourceFiles="@(_PluginFiles)" DestinationFolder="$(OutputPath)\Plugins" OverwriteReadOnlyFiles="true" />
+    <Move SourceFiles="@(_LibsFiles)" DestinationFolder="$(OutputPath)\Libs" OverwriteReadOnlyFiles="true" />
+  </Target>
+  
 </Project>
