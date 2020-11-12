@@ -11,6 +11,8 @@ namespace CustomEvents
     {
         internal static readonly EventSource Source = new ("CustomEventsSource");
 
+        public static DataOrigin DataOrigin { get; } = Source.Origin;
+
         public static EventName BeatmapObject { get; } = Source.Event(nameof(BeatmapObject));
         public static EventName BeatmapEvent { get; } = Source.Event(nameof(BeatmapEvent));
     }
