@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DNEE" Version="1.0.0-beta.8">
+    <PackageReference Include="DNEE" Version="1.0.0-beta.9">
       <IncludeAssets>all</IncludeAssets>
     </PackageReference>
   </ItemGroup>
