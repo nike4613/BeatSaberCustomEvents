@@ -4,6 +4,64 @@
         <name>IPA.Loader</name>
     </assembly>
     <members>
+        <member name="T:IPA.AntiMalware.AntiMalwareEngine">
+            <summary>
+            Provides a way to access BSIPA's Anti-Malware engine.
+            </summary>
+            <see cref="P:IPA.AntiMalware.AntiMalwareEngine.Engine"/>
+            <see cref="T:IPA.AntiMalware.IAntiMalware"/>
+        </member>
+        <member name="P:IPA.AntiMalware.AntiMalwareEngine.Engine">
+            <summary>
+            Gets the current Anti-Malware engine. 
+            </summary>
+        </member>
+        <member name="T:IPA.AntiMalware.IAntiMalware">
+            <summary>
+            An Anti-Malware engine that can be used to scan and detect potentially harmful files.
+            </summary>
+        </member>
+        <member name="M:IPA.AntiMalware.IAntiMalware.ScanFile(System.IO.FileInfo)">
+            <summary>
+            Scans a particular file for malware.
+            </summary>
+            <param name="file">The file to scan.</param>
+            <returns>A <see cref="T:IPA.AntiMalware.ScanResult"/> indicating whether the file is safe or not.</returns>
+        </member>
+        <member name="M:IPA.AntiMalware.IAntiMalware.ScanData(System.Byte[],System.String)">
+            <summary>
+            Scans a particular in-memory blob for malware.
+            </summary>
+            <param name="data">The binary blob to scan.</param>
+            <param name="contentName">The name of the content. If this is left <see langword="null"/>, one will be automatically generated.</param>
+            <returns>A <see cref="T:IPA.AntiMalware.ScanResult"/> indicating whether the file is safe or not.</returns>
+        </member>
+        <member name="T:IPA.AntiMalware.ScanResult">
+            <summary>
+            The result of an Anti-Malware scan.
+            </summary>
+        </member>
+        <member name="F:IPA.AntiMalware.ScanResult.KnownSafe">
+            <summary>
+            The object is known to be safe.
+            </summary>
+        </member>
+        <member name="F:IPA.AntiMalware.ScanResult.NotDetected">
+            <summary>
+            No malware was detected, but it is not known to be safe.
+            </summary>
+        </member>
+        <member name="F:IPA.AntiMalware.ScanResult.Detected">
+            <summary>
+            Malware was detected, and the content should not be executed.
+            </summary>
+        </member>
+        <member name="F:IPA.AntiMalware.ScanResult.MaybeMalware">
+            <summary>
+            The malware engine returned a threat level less than the max, so this object may be dangerous.
+            Proceed with caution.
+            </summary>
+        </member>
         <member name="T:IPA.Config.Config">
             <summary>
             An abstraction of a config file on disk, which handles synchronizing between a memory representation and the
@@ -298,6 +356,17 @@
             String is so that it doesn't conflict with <see cref="T:System.String"/>.
             </summary>
         </member>
+        <member name="M:IPA.Config.Data.Text.#ctor">
+            <summary>
+            Constructs an empty <see cref="T:IPA.Config.Data.Text"/> object.
+            </summary>
+        </member>
+        <member name="M:IPA.Config.Data.Text.#ctor(System.String)">
+            <summary>
+            Constructs a <see cref="T:IPA.Config.Data.Text"/> object containing the provided value.
+            </summary>
+            <param name="value">The value to construct with.</param>
+        </member>
         <member name="P:IPA.Config.Data.Text.Value">
             <summary>
             The actual value of this <see cref="T:IPA.Config.Data.Text"/> object.
@@ -314,6 +383,17 @@
             A <see cref="P:IPA.Config.Data.Integer.Value"/> representing an integer. This may hold a <see cref="T:System.Int64"/>'s 
             worth of data.
             </summary>
+        </member>
+        <member name="M:IPA.Config.Data.Integer.#ctor">
+            <summary>
+            Constructs an empty <see cref="T:IPA.Config.Data.Integer"/> object.
+            </summary>
+        </member>
+        <member name="M:IPA.Config.Data.Integer.#ctor(System.Int64)">
+            <summary>
+            Constructs a <see cref="T:IPA.Config.Data.Integer"/> object containing the provided value.
+            </summary>
+            <param name="value">The value to construct with.</param>
         </member>
         <member name="P:IPA.Config.Data.Integer.Value">
             <summary>
@@ -335,8 +415,19 @@
         <member name="T:IPA.Config.Data.FloatingPoint">
             <summary>
             A <see cref="P:IPA.Config.Data.FloatingPoint.Value"/> representing a floating point value. This may hold a 
-            <see cref="T:System.Decimal"/>'s  worth of data.
+            <see cref="T:System.Decimal"/>'s worth of data.
             </summary>
+        </member>
+        <member name="M:IPA.Config.Data.FloatingPoint.#ctor">
+            <summary>
+            Constructs an empty <see cref="T:IPA.Config.Data.FloatingPoint"/> object.
+            </summary>
+        </member>
+        <member name="M:IPA.Config.Data.FloatingPoint.#ctor(System.Decimal)">
+            <summary>
+            Constructs a <see cref="T:IPA.Config.Data.FloatingPoint"/> object containing the provided value.
+            </summary>
+            <param name="value">The value to construct with.</param>
         </member>
         <member name="P:IPA.Config.Data.FloatingPoint.Value">
             <summary>
@@ -359,6 +450,17 @@
             <summary>
             A <see cref="P:IPA.Config.Data.Boolean.Value"/> representing a boolean value.
             </summary>
+        </member>
+        <member name="M:IPA.Config.Data.Boolean.#ctor">
+            <summary>
+            Constructs an empty <see cref="T:IPA.Config.Data.Boolean"/> object.
+            </summary>
+        </member>
+        <member name="M:IPA.Config.Data.Boolean.#ctor(System.Boolean)">
+            <summary>
+            Constructs a <see cref="T:IPA.Config.Data.Boolean"/> object containing the provided value.
+            </summary>
+            <param name="value">The value to construct with.</param>
         </member>
         <member name="P:IPA.Config.Data.Boolean.Value">
             <summary>
@@ -1799,13 +1901,16 @@
             </item>
             <item>
             <term><see cref="T:IPA.Config.Config"/></term>
-            <description>
-            <para>A <see cref="T:IPA.Config.Config"/> object for the plugin being injected.</para>
+            <description>A <see cref="T:IPA.Config.Config"/> object for the plugin being injected.
             <para>
             These parameters may have <see cref="T:IPA.Config.Config.NameAttribute"/> and <see cref="T:IPA.Config.Config.PreferAttribute"/> to control
             how it is constructed.
             </para>
             </description>
+            </item>
+            <item>
+            <term><see cref="T:IPA.AntiMalware.IAntiMalware"/></term>
+            <description>The <see cref="T:IPA.AntiMalware.IAntiMalware"/> instance which should be used for any potentially dangerous files.</description>
             </item>
             </list>
             For all of the default injectors, only one of each will be generated, and any later parameters will recieve the same value as the first one.
@@ -1820,7 +1925,46 @@
             <param name="meta">the <see cref="T:IPA.Loader.PluginMetadata"/> for the plugin being loaded.</param>
             <returns>the value to inject into that parameter.</returns>
         </member>
+        <member name="T:IPA.Loader.PluginInitInjector.InjectedValueProvider">
+            <summary>
+            A provider for parameter injectors to request injected values themselves.
+            </summary>
+            <remarks>
+            Some injectors may look at attributes on the parameter to gain additional information about what it should provide.
+            If an injector wants to allow end users to affect the things it requests, it may pass the parameter it is currently
+            injecting for to this delegate along with a type override to select some other type.
+            </remarks>
+            <param name="forParam">the parameter that this is providing for.</param>
+            <param name="typeOverride">an optional override for the parameter type.</param>
+            <returns>the value that would otherwise be injected.</returns>
+        </member>
+        <member name="T:IPA.Loader.PluginInitInjector.InjectParameterNested">
+            <summary>
+            A typed injector for a plugin's Init method. When registered, called for all associated types. If it returns null, the default for the type will be used.
+            </summary>
+            <param name="previous">the previous return value of the function, or <see langword="null"/> if never called for plugin.</param>
+            <param name="param">the <see cref="T:System.Reflection.ParameterInfo"/> of the parameter being injected.</param>
+            <param name="meta">the <see cref="T:IPA.Loader.PluginMetadata"/> for the plugin being loaded.</param>
+            <param name="provider">an <see cref="T:IPA.Loader.PluginInitInjector.InjectedValueProvider"/> to allow the injector to request injected values.</param>
+            <returns>the value to inject into that parameter.</returns>
+        </member>
+        <member name="M:IPA.Loader.PluginInitInjector.Inject``1(IPA.Loader.PluginInitInjector.InjectedValueProvider,System.Reflection.ParameterInfo)">
+            <summary>
+            Invokes the provider with <paramref name="param"/> and <typeparamref name="T"/> and casts the result to <typeparamref name="T"/>.
+            </summary>
+            <typeparam name="T">the type of object to be injected</typeparam>
+            <param name="provider">the provider to invoke.</param>
+            <param name="param">the parameter to provide for</param>
+            <returns>the value requested, or <see langword="null"/>.</returns>
+        </member>
         <member name="M:IPA.Loader.PluginInitInjector.AddInjector(System.Type,IPA.Loader.PluginInitInjector.InjectParameter)">
+            <summary>
+            Adds an injector to be used when calling future plugins' Init methods.
+            </summary>
+            <param name="type">the type of the parameter.</param>
+            <param name="injector">the function to call for injection.</param>
+        </member>
+        <member name="M:IPA.Loader.PluginInitInjector.AddInjector(System.Type,IPA.Loader.PluginInitInjector.InjectParameterNested)">
             <summary>
             Adds an injector to be used when calling future plugins' Init methods.
             </summary>
@@ -1840,7 +1984,7 @@
         </member>
         <member name="F:IPA.Loader.Reason.Error">
             <summary>
-            An error was thrown either loading plugin information fomr disk, or when initializing the plugin.
+            An error was thrown either loading plugin information from disk, or when initializing the plugin.
             </summary>
             <remarks>
             When this is the set <see cref="T:IPA.Loader.Reason"/> in an <see cref="T:IPA.Loader.IgnoreReason"/> structure, the member
@@ -1868,7 +2012,7 @@
         </member>
         <member name="F:IPA.Loader.Reason.Dependency">
             <summary>
-            The plugin this reason is assiciated with is missing a dependency.
+            The plugin this reason is associated with is missing a dependency.
             </summary>
             <remarks>
             Since this is only given when a dependency is missing, <see cref="P:IPA.Loader.IgnoreReason.RelatedTo"/> will
@@ -1889,7 +2033,7 @@
         </member>
         <member name="F:IPA.Loader.Reason.Unsupported">
             <summary>
-            The plugin this reason is assoicated with is unsupported.
+            The plugin this reason is associated with is unsupported.
             </summary>
             <remarks>
             Currently, there is no path in the loader that emits this <see cref="T:IPA.Loader.Reason"/>, however there may
@@ -1981,7 +2125,7 @@
             <summary>
             Gets info about the enabled plugin with the specified ID.
             </summary>
-            <param name="name">the ID name of the plugin to get (must be an exact match)</param>
+            <param name="id">the ID name of the plugin to get (must be an exact match)</param>
             <returns>the plugin metadata for the requested plugin or <see langword="null"/> if it doesn't exist or is disabled</returns>
         </member>
         <member name="M:IPA.Loader.PluginManager.GetDisabledPlugin(System.String)">
@@ -1995,7 +2139,7 @@
             <summary>
             Gets a disabled plugin's metadata by its ID.
             </summary>
-            <param name="name">the ID of the disabled plugin to get</param>
+            <param name="id">the ID of the disabled plugin to get</param>
             <returns>the metadata for the corresponding plugin</returns>
         </member>
         <member name="M:IPA.Loader.PluginManager.PluginStateTransaction">
@@ -2123,9 +2267,9 @@
         </member>
         <member name="P:IPA.Loader.PluginMetadata.Id">
             <summary>
-            The BeatMods ID of the plugin, or null if it doesn't have one.
+            The ID of the plugin.
             </summary>
-            <value>the updater ID of the plugin</value>
+            <value>the ID of the plugin</value>
         </member>
         <member name="P:IPA.Loader.PluginMetadata.Author">
             <summary>
@@ -2140,6 +2284,12 @@
             <value>the description of the plugin</value>
         </member>
         <member name="P:IPA.Loader.PluginMetadata.Version">
+            <summary>
+            The version of the plugin.
+            </summary>
+            <value>the version of the plugin</value>
+        </member>
+        <member name="P:IPA.Loader.PluginMetadata.HVersion">
             <summary>
             The version of the plugin.
             </summary>
@@ -2992,6 +3142,18 @@
             <seealso cref="T:IPA.PluginAttribute"/>
             <seealso cref="T:IPA.OnDisableAttribute"/>
         </member>
+        <member name="T:IPA.NoEnableDisableAttribute">
+            <summary>
+            Indicates that the applied plugin class does not need <see cref="T:IPA.OnEnableAttribute"/> or
+            <see cref="T:IPA.OnDisableAttribute"/> methods.
+            </summary>
+            <remarks>
+            This is typically only the case when some other utility mod handles their lifecycle for
+            them, such as with SiraUtil and Zenject.
+            </remarks>
+            <seealso cref="T:IPA.OnEnableAttribute"/>
+            <seealso cref="T:IPA.OnDisableAttribute"/>
+        </member>
         <member name="T:IPA.PluginAttribute">
             <summary>
             Marks a class as being a BSIPA plugin.
@@ -3134,31 +3296,6 @@
             <summary>
             Gets invoked on ever physics update.
             </summary>
-        </member>
-        <member name="F:IPA.Updating.BeatMods.ApiEndpoint.Mod.Id">
-            <summary>
-            Will be a useless string of characters. Do not use.
-            </summary>
-        </member>
-        <member name="F:IPA.Updating.BeatMods.ApiEndpoint.Mod.DownloadsObject.Hashes">
-            <summary>
-            Hashes stored are MD5
-            </summary>
-        </member>
-        <member name="T:IPA.Updating.BeatMods.Updater.InstallFinish">
-            <summary>
-            This will still be called even if there was an error. Called after all three download/install attempts, or after a successful installation.
-            ALWAYS called.
-            </summary>
-            <param name="obj"></param>
-            <param name="didError"></param>
-        </member>
-        <member name="T:IPA.Updating.BeatMods.Updater.InstallFailed">
-            <summary>
-            This can be called multiple times
-            </summary>
-            <param name="obj"></param>
-            <param name="error"></param>
         </member>
         <member name="T:IPA.Utilities.FieldAccessor`2">
             <summary>
@@ -3360,13 +3497,13 @@
         </member>
         <member name="T:IPA.Utilities.AlmostVersion">
             <summary>
-            A type that wraps <see cref="T:SemVer.Version"/> so that the string of the version is stored when the string is 
-            not a valid <see cref="T:SemVer.Version"/>.
+            A type that wraps <see cref="T:Hive.Versioning.Version"/> so that the string of the version is stored when the string is 
+            not a valid <see cref="T:Hive.Versioning.Version"/>.
             </summary>
         </member>
         <member name="T:IPA.Utilities.AlmostVersion.StoredAs">
             <summary>
-            Represents a storage type of either parsed <see cref="T:SemVer.Version"/> object or raw <see cref="F:IPA.Utilities.AlmostVersion.StoredAs.String"/>.
+            Represents a storage type of either parsed <see cref="T:Hive.Versioning.Version"/> object or raw <see cref="F:IPA.Utilities.AlmostVersion.StoredAs.String"/>.
             </summary>
         </member>
         <member name="F:IPA.Utilities.AlmostVersion.StoredAs.SemVer">
@@ -3384,6 +3521,12 @@
             Creates a new <see cref="T:IPA.Utilities.AlmostVersion"/> with the version string provided in <paramref name="vertext"/>.
             </summary>
             <param name="vertext">the version string to store</param>
+        </member>
+        <member name="M:IPA.Utilities.AlmostVersion.#ctor(Hive.Versioning.Version)">
+            <summary>
+            Creates an <see cref="T:IPA.Utilities.AlmostVersion"/> from the <see cref="T:Hive.Versioning.Version"/> provided in <paramref name="ver"/>.
+            </summary>
+            <param name="ver">the <see cref="T:Hive.Versioning.Version"/> to store</param>
         </member>
         <member name="M:IPA.Utilities.AlmostVersion.#ctor(SemVer.Version)">
             <summary>
@@ -3415,27 +3558,27 @@
         </member>
         <member name="P:IPA.Utilities.AlmostVersion.SemverValue">
             <summary>
-            The value of the <see cref="T:IPA.Utilities.AlmostVersion"/> if it was stored as a <see cref="T:SemVer.Version"/>.
+            The value of the <see cref="T:IPA.Utilities.AlmostVersion"/> if it was stored as a <see cref="T:Hive.Versioning.Version"/>.
             </summary>
-            <value>the stored value as a <see cref="T:SemVer.Version"/>, or <see langword="null"/> if not stored as a version.</value>
+            <value>the stored value as a <see cref="T:Hive.Versioning.Version"/>, or <see langword="null"/> if not stored as a version.</value>
         </member>
         <member name="P:IPA.Utilities.AlmostVersion.StorageMode">
             <summary>
-            The way the value is stored, whether it be as a <see cref="T:SemVer.Version"/> or a <see cref="T:System.String"/>.
+            The way the value is stored, whether it be as a <see cref="T:Hive.Versioning.Version"/> or a <see cref="T:System.String"/>.
             </summary>
             <value>the storage mode used to store this value</value>
         </member>
         <member name="M:IPA.Utilities.AlmostVersion.ToString">
             <summary>
             Gets a string representation of the current version. If the value is stored as a string, this returns it. If it is
-            stored as a <see cref="T:SemVer.Version"/>, it is equivalent to calling <see cref="M:SemVer.Version.ToString"/>.
+            stored as a <see cref="T:Hive.Versioning.Version"/>, it is equivalent to calling <see cref="M:Hive.Versioning.Version.ToString"/>.
             </summary>
             <returns>a string representation of the current version</returns>
             <seealso cref="M:System.Object.ToString"/>
         </member>
         <member name="M:IPA.Utilities.AlmostVersion.CompareTo(IPA.Utilities.AlmostVersion)">
             <summary>
-            Compares <see langword="this"/> to the <see cref="T:IPA.Utilities.AlmostVersion"/> in <paramref name="other"/> using <see cref="M:SemVer.Version.CompareTo(SemVer.Version)"/>
+            Compares <see langword="this"/> to the <see cref="T:IPA.Utilities.AlmostVersion"/> in <paramref name="other"/> using <see cref="M:Hive.Versioning.Version.CompareTo(Hive.Versioning.Version)"/>
             or <see cref="M:System.String.CompareTo(System.String)"/>, depending on the current store.
             </summary>
             <remarks>
@@ -3443,11 +3586,23 @@
             </remarks>
             <param name="other">the <see cref="T:IPA.Utilities.AlmostVersion"/> to compare to</param>
             <returns>less than 0 if <paramref name="other"/> is considered bigger than <see langword="this"/>, 0 if equal, and greater than zero if smaller</returns>
-            <seealso cref="M:IPA.Utilities.AlmostVersion.CompareTo(SemVer.Version)"/>
+            <seealso cref="M:IPA.Utilities.AlmostVersion.CompareTo(Hive.Versioning.Version)"/>
+        </member>
+        <member name="M:IPA.Utilities.AlmostVersion.CompareTo(Hive.Versioning.Version)">
+            <summary>
+            Compares <see langword="this"/> to the <see cref="T:Hive.Versioning.Version"/> in <paramref name="other"/> using <see cref="M:Hive.Versioning.Version.CompareTo(Hive.Versioning.Version)"/>.
+            </summary>
+            <remarks>
+            The storage method of <see langword="this"/> must be <see cref="F:IPA.Utilities.AlmostVersion.StoredAs.SemVer"/>, else an <see cref="T:System.InvalidOperationException"/> will
+            be thrown.
+            </remarks>
+            <param name="other">the <see cref="T:Hive.Versioning.Version"/> to compare to</param>
+            <returns>less than 0 if <paramref name="other"/> is considered bigger than <see langword="this"/>, 0 if equal, and greater than zero if smaller</returns>
+            <seealso cref="M:IPA.Utilities.AlmostVersion.CompareTo(IPA.Utilities.AlmostVersion)"/>
         </member>
         <member name="M:IPA.Utilities.AlmostVersion.CompareTo(SemVer.Version)">
             <summary>
-            Compares <see langword="this"/> to the <see cref="T:SemVer.Version"/> in <paramref name="other"/> using <see cref="M:SemVer.Version.CompareTo(SemVer.Version)"/>.
+            Compares <see langword="this"/> to the <see cref="T:SemVer.Version"/> in <paramref name="other"/> using <see cref="M:Hive.Versioning.Version.CompareTo(Hive.Versioning.Version)"/>.
             </summary>
             <remarks>
             The storage method of <see langword="this"/> must be <see cref="F:IPA.Utilities.AlmostVersion.StoredAs.SemVer"/>, else an <see cref="T:System.InvalidOperationException"/> will
@@ -3477,7 +3632,7 @@
         </member>
         <member name="M:IPA.Utilities.AlmostVersion.op_Equality(IPA.Utilities.AlmostVersion,IPA.Utilities.AlmostVersion)">
             <summary>
-            Compares two versions, only taking into account the numeric part of the version if they are stored as <see cref="T:SemVer.Version"/>s,
+            Compares two versions, only taking into account the numeric part of the version if they are stored as <see cref="T:Hive.Versioning.Version"/>s,
             or strict equality if they are stored as <see cref="T:System.String"/>s.
             </summary>
             <remarks>
@@ -3506,6 +3661,21 @@
             <seealso cref="M:IPA.Utilities.AlmostVersion.#ctor(SemVer.Version)"/>
         </member>
         <member name="M:IPA.Utilities.AlmostVersion.op_Implicit(IPA.Utilities.AlmostVersion)~SemVer.Version">
+            <summary>
+            Implicitly converts an <see cref="T:IPA.Utilities.AlmostVersion"/> to <see cref="T:SemVer.Version"/>, if applicable, using <see cref="P:IPA.Utilities.AlmostVersion.SemverValue"/>.
+            If not applicable, returns <see langword="null"/>
+            </summary>
+            <param name="av">the <see cref="T:IPA.Utilities.AlmostVersion"/> to convert to a <see cref="T:SemVer.Version"/></param>
+            <seealso cref="P:IPA.Utilities.AlmostVersion.SemverValue"/>
+        </member>
+        <member name="M:IPA.Utilities.AlmostVersion.op_Implicit(Hive.Versioning.Version)~IPA.Utilities.AlmostVersion">
+            <summary>
+            Implicitly converts a <see cref="T:SemVer.Version"/> to <see cref="T:IPA.Utilities.AlmostVersion"/> using <see cref="M:IPA.Utilities.AlmostVersion.#ctor(SemVer.Version)"/>.
+            </summary>
+            <param name="ver">the <see cref="T:SemVer.Version"/> to convert</param>
+            <seealso cref="M:IPA.Utilities.AlmostVersion.#ctor(SemVer.Version)"/>
+        </member>
+        <member name="M:IPA.Utilities.AlmostVersion.op_Implicit(IPA.Utilities.AlmostVersion)~Hive.Versioning.Version">
             <summary>
             Implicitly converts an <see cref="T:IPA.Utilities.AlmostVersion"/> to <see cref="T:SemVer.Version"/>, if applicable, using <see cref="P:IPA.Utilities.AlmostVersion.SemverValue"/>.
             If not applicable, returns <see langword="null"/>
@@ -4016,24 +4186,6 @@
             Extensions for <see cref="T:System.Collections.Generic.IEnumerable`1"/> that don't currently exist in <c>System.Linq</c>.
             </summary>
         </member>
-        <member name="M:IPA.Utilities.EnumerableExtensions.Prepend``1(System.Collections.Generic.IEnumerable{``0},``0)">
-            <summary>
-            Adds a value to the beginning of the sequence.
-            </summary>
-            <typeparam name="T">the type of the elements of <paramref name="seq"/></typeparam>
-            <param name="seq">a sequence of values</param>
-            <param name="prep">the value to prepend to <paramref name="seq"/></param>
-            <returns>a new sequence beginning with <paramref name="prep"/></returns>
-        </member>
-        <member name="M:IPA.Utilities.EnumerableExtensions.Append``1(System.Collections.Generic.IEnumerable{``0},``0)">
-            <summary>
-            Adds a value to the end of the sequence.
-            </summary>
-            <typeparam name="T">the type of the elements of <paramref name="seq"/></typeparam>
-            <param name="seq">a sequence of values</param>
-            <param name="app">the value to append to <paramref name="seq"/></param>
-            <returns>a new sequence ending with <paramref name="app"/></returns>
-        </member>
         <member name="M:IPA.Utilities.EnumerableExtensions.NonNull``1(System.Collections.Generic.IEnumerable{``0})">
             <summary>
             LINQ-style extension method that filters <see langword="null"/> elements out of an enumeration.
@@ -4400,6 +4552,14 @@
             <param name="r">the right value</param>
             <returns>&lt; 0 if l is less than r, 0 if they are equal in the numeric portion, or &gt; 0 if l is greater than r</returns>
         </member>
+        <member name="M:IPA.Utilities.Utils.VersionCompareNoPrerelease(Hive.Versioning.Version,Hive.Versioning.Version)">
+            <summary>
+            Compares a pair of <see cref="T:Hive.Versioning.Version"/>s ignoring both the prerelease and build fields.
+            </summary>
+            <param name="l">the left value</param>
+            <param name="r">the right value</param>
+            <returns>&lt; 0 if l is less than r, 0 if they are equal in the numeric portion, or &gt; 0 if l is greater than r</returns>
+        </member>
         <member name="T:IPA.Utilities.Utils.ScopeGuardObject">
             <summary>
             An object used to manage scope guards.
@@ -4428,6 +4588,16 @@
             using var _ = Utils.ScopeGuard(() => RunOnScopeExit(value));
             </code>
             </example>
+        </member>
+        <member name="M:IPA.Utilities.Utils.Deconstruct``2(System.Collections.Generic.KeyValuePair{``0,``1},``0@,``1@)">
+            <summary>
+            Deconstructs a <see cref="T:System.Collections.Generic.KeyValuePair`2"/> as its key and value.
+            </summary>
+            <typeparam name="TKey">The type of the key.</typeparam>
+            <typeparam name="TValue">The type of the value.</typeparam>
+            <param name="kvp">The <see cref="T:System.Collections.Generic.KeyValuePair`2"/> to deconstruct.</param>
+            <param name="key">The key in <paramref name="kvp"/>.</param>
+            <param name="value">The value in <paramref name="kvp"/>.</param>
         </member>
         <member name="T:IPA.Utilities.Win32">
             <summary>
@@ -5663,6 +5833,16 @@
             <summary>
             A top-level window is being replaced. The window exists when the system calls this hook.
             </summary>
+        </member>
+        <member name="T:System.Runtime.CompilerServices.IsExternalInit">
+            <summary>
+                Reserved to be used by the compiler for tracking metadata.
+                This class should not be used by developers in source code.
+            </summary>
+            <remarks>
+                This definition is provided by the <i>IsExternalInit</i> NuGet package (https://www.nuget.org/packages/IsExternalInit).
+                Please see https://github.com/manuelroemer/IsExternalInit for more information.
+            </remarks>
         </member>
     </members>
 </doc>

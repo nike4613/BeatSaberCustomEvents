@@ -94,11 +94,11 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
         }
     }
 
-    internal class CustomEventCallbackData : BeatmapObjectCallbackController.BeatmapEventCallbackData, IDisposable
+    internal class CustomEventCallbackData : BeatmapEventCallbackData, IDisposable
     {
         private readonly EventHandle handle;
 
-        public CustomEventCallbackData(BeatmapObjectCallbackController.BeatmapEventCallback callback, float aheadTime, EventHandle handle)
+        public CustomEventCallbackData(BeatmapEventCallback callback, float aheadTime, EventHandle handle)
             : base(callback, aheadTime)
         {
             this.handle = handle;
@@ -116,11 +116,11 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
         }
     }
 
-    internal class CustomObjectCallbackData : BeatmapObjectCallbackController.BeatmapObjectCallbackData, IDisposable
+    internal class CustomObjectCallbackData : BeatmapObjectCallbackData, IDisposable
     {
         private readonly EventHandle handle;
 
-        public CustomObjectCallbackData(BeatmapObjectCallbackController.BeatmapObjectCallback callback, float aheadTime, EventHandle handle)
+        public CustomObjectCallbackData(BeatmapObjectCallback callback, float aheadTime, EventHandle handle)
             : base(callback, aheadTime, 0)
         {
             this.handle = handle;
@@ -147,8 +147,8 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
         [HarmonyPrefix]
         [HarmonyPatch(nameof(BeatmapObjectCallbackController.AddBeatmapEventCallback))]
         public static bool AddBeatmapEventCallbackPre(//BeatmapObjectCallbackController __instance,
-            out BeatmapObjectCallbackController.BeatmapEventCallbackData __result,
-            BeatmapObjectCallbackController.BeatmapEventCallback callback,
+            out BeatmapEventCallbackData __result,
+            BeatmapEventCallback callback,
             float aheadTime)
         {
             var handle = Events.Source.SubscribeToCallahead<BeatmapEventData>(Events.BeatmapEvent, (ev, data) =>
@@ -169,7 +169,7 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
 
         [HarmonyPrefix]
         [HarmonyPatch(nameof(BeatmapObjectCallbackController.RemoveBeatmapEventCallback))]
-        public static bool RemoveBeatmapEventCallbackPre(BeatmapObjectCallbackController.BeatmapEventCallbackData callbackData)
+        public static bool RemoveBeatmapEventCallbackPre(BeatmapEventCallbackData callbackData)
         {
             if (callbackData is not CustomEventCallbackData ced)
             {
@@ -185,8 +185,8 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
         [HarmonyPrefix]
         [HarmonyPatch(nameof(BeatmapObjectCallbackController.AddBeatmapObjectCallback))]
         public static bool AddBeatmapObjectCallbackPre(//BeatmapObjectCallbackController __instance,
-            out BeatmapObjectCallbackController.BeatmapObjectCallbackData __result,
-            BeatmapObjectCallbackController.BeatmapObjectCallback callback,
+            out BeatmapObjectCallbackData __result,
+            BeatmapObjectCallback callback,
             float aheadTime)
         {
             var handle = Events.Source.SubscribeToCallahead<BeatmapObjectData>(Events.BeatmapObject, (ev, data) =>
@@ -207,7 +207,7 @@ namespace CustomEvents.Patches._BeatmapObjectCallbackController
 
         [HarmonyPrefix]
         [HarmonyPatch(nameof(BeatmapObjectCallbackController.RemoveBeatmapObjectCallback))]
-        public static bool RemoveBeatmapObjectCallbackPre(BeatmapObjectCallbackController.BeatmapObjectCallbackData callbackData)
+        public static bool RemoveBeatmapObjectCallbackPre(BeatmapObjectCallbackData callbackData)
         {
             if (callbackData is not CustomObjectCallbackData ced)
             {

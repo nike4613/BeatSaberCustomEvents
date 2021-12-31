@@ -1,7 +1,9 @@
 ::from bsinstalldir.txt
 "::resolveInHere Libs/
 ""0Harmony.dll
-""SemVer.dll
+""Hive.Versioning.
+"""dll
+"""xml?optional
 "::resolveInHere Plugins/
 ""SiraUtil.
 """dll

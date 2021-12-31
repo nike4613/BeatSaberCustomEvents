@@ -36,7 +36,7 @@ namespace CustomEvents
             Harmony = new Harmony("com.cirr.danike.CustomEvents");
 
             // Sira handles enables/disables sanely automagically!
-            zenjector.OnApp<PluginInstaller>();
+            zenjector.Install<PluginInstaller>(Location.App);
         }
 
         [OnEnable]
@@ -44,7 +44,7 @@ namespace CustomEvents
         {
             Log.Debug($"Enabling...");
             Harmony.PatchAll(Assembly.GetExecutingAssembly());
-            Log.Debug($"Enabled {Metadata.Name} version {Metadata.Version}");
+            Log.Debug($"Enabled {Metadata.Name} version {Metadata.HVersion}");
 
             var source = new EventSource("TestSource");
             source.SubscribeTo<BeatmapEventData>(Events.BeatmapEvent, (@event, data) =>
@@ -80,8 +80,8 @@ namespace CustomEvents
         [OnDisable]
         public void OnDisable()
         {
-            Harmony.UnpatchAll(Harmony.Id);
-            Log.Debug($"Disabled {Metadata.Name} version {Metadata.Version}");
+            Harmony.UnpatchSelf();
+            Log.Debug($"Disabled {Metadata.Name} version {Metadata.HVersion}");
         }
     }
 }

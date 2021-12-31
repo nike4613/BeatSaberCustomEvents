@@ -4,10 +4,13 @@
     <TargetFramework>net472</TargetFramework>
     <LangVersion>preview</LangVersion>
     <Nullable>enable</Nullable>
-    <WarningsAsErrors>CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8625;CS8762;CS8767</WarningsAsErrors>
+    <WarningsAsErrors>nullable</WarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RootNamespace>CustomEvents</RootNamespace>
     <AssemblyName>CustomEvents</AssemblyName>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>6</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,12 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DNEE" Version="1.0.0-beta.6">
+    <PackageReference Include="DNEE" Version="1.0.0-beta.8">
       <IncludeAssets>all</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
@@ -42,8 +41,8 @@
       <HintPath>..\Refs\Main.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="SemVer">
-      <HintPath>..\Refs\SemVer.dll</HintPath>
+    <Reference Include="Hive.Versioning">
+      <HintPath>..\Refs\Hive.Versioning.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="SiraUtil">
